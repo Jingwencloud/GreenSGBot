@@ -100,3 +100,6 @@ def main():
                             url_path=BOT_TOKEN)
     updater.bot.setWebhook('https://arcane-beyond-43802.herokuapp.com/' + BOT_TOKEN)
     updater.idle()
+
+if __name__ == '__main__':
+    main()
