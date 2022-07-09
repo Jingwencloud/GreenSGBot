@@ -1,7 +1,6 @@
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import CallbackQueryHandler, CommandHandler, MessageHandler, filters, Updater
 import os
-from dotenv import load_dotenv
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import firestore
@@ -10,7 +9,6 @@ cred = credentials.Certificate("test-6d84c-firebase-adminsdk-qknug-c08468824e.js
 firebase_admin.initialize_app(cred)
 
 db = firestore.client()
-load_dotenv()
 PORT = int(os.environ.get('PORT', 5000))
 BOT_TOKEN = os.getenv('BOT_TOKEN')
 
