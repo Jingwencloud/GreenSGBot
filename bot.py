@@ -1,4 +1,4 @@
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardRemove, Update
 from telegram.ext import CallbackQueryHandler, CommandHandler, MessageHandler, filters, ApplicationBuilder, ContextTypes
 import os
 import telegram
@@ -12,13 +12,11 @@ import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import firestore
 
-geolocator = geopy.Nominatim(user_agent='recycleTeleBot972022')
+geolocator = geopy.Nominatim(user_agent=os.environ.get('USER_AGENT'))
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     level=logging.INFO
 )
-
-geolocator = geopy.Nominatim(user_agent='recycleTeleBot972022')
 
 logger = logging.getLogger(__name__)
 
@@ -54,12 +52,12 @@ async def error(update, context):
 
 async def start(update, context):
     logger.info("start command")
-    await update.message.reply_text(f"Hello {update.effective_user.first_name}! I am SYJ, the recycling expert! Use the following commands to find out more information about recycling! \n \n" + 
-        "Use /info to find out whether an item is suitable to recycling.\nUse /ewaste to find out the e-waste bins located near you.")
+    await update.message.reply_text(f"Hello {update.effective_user.first_name}! I am GreenSGBot, the recycling expert! Use the following commands to find out more information about recycling! \n \n" + 
+        "Use /info to find out whether an item is suitable to recycling.\nUse /searchbin to find out the e-waste bins located near you by sharing your location.\nUse /postalcodesearchbin to find out the e-waste bins near you by sending your postal code. ")
 
 async def help(update, context):
     await update.message.reply_text("Use the following commands to find out more information about recycling! \n \n" + 
-        "Use /info to find out whether an item is suitable to recycling.\nUse /ewaste to find out the e-waste bins located near you.")
+        "Use /info to find out whether an item is suitable to recycling.\nUse /searchbin to find out the e-waste bins located near you by sharing your location.\nUse /postalcodesearchbin to find out the e-waste bins near you by sending your postal code.")
 
 async def getInfo(update, context):
     item = update.message.text.casefold()
@@ -121,7 +119,7 @@ async def manage_location(update: Update, context: ContextTypes.DEFAULT_TYPE):
     messages = search(postal_code, db)
     for msg in messages:
         await context.bot.send_message(chat_id=update.effective_chat.id,
-                                       text = msg)
+                                       text = msg, reply_markup=ReplyKeyboardRemove())
 
 def main():
     bot = ApplicationBuilder().token(BOT_TOKEN).build()
