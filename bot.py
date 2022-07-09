@@ -4,9 +4,6 @@ from telegram.ext import CallbackQueryHandler, CommandHandler, ConversationHandl
 import os
 import telegram
 import logging
-import firebase_admin
-from firebase_admin import credentials
-from firebase_admin import firestore
 from query import search
 import geopy
 import firebase_admin
