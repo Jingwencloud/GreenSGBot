@@ -32,7 +32,7 @@ json = {
   "client_x509_cert_url": CLIENT_CERT_URL
 }
 
-PORT = int(os.environ.get('PORT', 5000))
+PORT = int(os.environ.get('PORT', 8443))
 BOT_TOKEN = os.environ.get('BOT_TOKEN')
 db = None
 
