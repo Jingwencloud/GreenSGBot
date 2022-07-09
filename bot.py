@@ -5,12 +5,12 @@ import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import firestore
 
-PROJECT_ID = os.getenv('PROJECT_ID')
-PRIVATE_KEY_ID = os.getenv('PRIVATE_KEY_ID')
-PRIVATE_KEY = os.getenv('PRIVATE_KEY')
-CLIENT_EMAIL = os.getenv('CLIENT_EMAIL')
-CLIENT_ID = os.getenv('CLIENT_ID')
-CLIENT_CERT_URL = os.getenv('CLIENT_CERT_URL')
+PROJECT_ID = os.environ.get('PROJECT_ID')
+PRIVATE_KEY_ID = os.environ.get('PRIVATE_KEY_ID')
+PRIVATE_KEY = os.environ.get('PRIVATE_KEY')
+CLIENT_EMAIL = os.environ.get('CLIENT_EMAIL')
+CLIENT_ID = os.environ.get('CLIENT_ID')
+CLIENT_CERT_URL = os.environ.get('CLIENT_CERT_URL')
 json = {
   "type": "service_account",
   "project_id": PROJECT_ID,
@@ -29,8 +29,8 @@ cred = credentials.Certificate(json)
 firebase_admin.initialize_app(cred)
 
 db = firestore.client()
-PORT = int(os.getenv('PORT', 5000))
-BOT_TOKEN = os.getenv('BOT_TOKEN')
+PORT = int(os.environ.get('PORT', 5000))
+BOT_TOKEN = os.environ.get('BOT_TOKEN')
 
 async def start(update, context):
     await update.message.reply_text(f"Hello {update.effective_user.first_name}! I am SYJ, the recycling expert! Use the following commands to find out more information about recycling! \n \n" + 
