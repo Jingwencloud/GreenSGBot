@@ -42,13 +42,13 @@ def error(update, context):
     """Log Errors caused by Updates."""
     logger.warning('Update "%s" caused error "%s"', update, context.error)
 
-async def start(update, context):
+def start(update, context):
     logger.info("start command")
-    await update.message.reply_text(f"Hello {update.effective_user.first_name}! I am SYJ, the recycling expert! Use the following commands to find out more information about recycling! \n \n" + 
+    update.message.reply_text(f"Hello {update.effective_user.first_name}! I am SYJ, the recycling expert! Use the following commands to find out more information about recycling! \n \n" + 
         "Use /info to find out whether an item is suitable to recycling.\nUse /ewaste to find out the e-waste bins located near you.")
 
-async def help(update, context):
-    await update.message.reply_text("Use the following commands to find out more information about recycling! \n \n" + 
+def help(update, context):
+    update.message.reply_text("Use the following commands to find out more information about recycling! \n \n" + 
         "Use /info to find out whether an item is suitable to recycling.\nUse /ewaste to find out the e-waste bins located near you.")
 
 # async def getInfo(update, context):
