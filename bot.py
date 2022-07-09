@@ -6,7 +6,6 @@ import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import firestore
 
-db = None
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     level=logging.INFO)
 
@@ -35,6 +34,9 @@ json = {
 
 PORT = int(os.environ.get('PORT', 5000))
 BOT_TOKEN = os.environ.get('BOT_TOKEN')
+cred = credentials.Certificate(json)
+firebase_admin.initialize_app(cred)
+db = firestore.client()
 
 def error(update, context):
     """Log Errors caused by Updates."""
@@ -99,9 +101,6 @@ def main():
     updater = Updater(BOT_TOKEN, use_context=True)
     bot = updater.dispatcher
     logger.info("main called")
-    cred = credentials.Certificate(json)
-    firebase_admin.initialize_app(cred)
-    db = firestore.client()
     bot.add_handler(CommandHandler('start', start))
     bot.add_handler(CommandHandler('help', help))
     bot.add_error_handler(error)
