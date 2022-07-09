@@ -1,4 +1,5 @@
 
+
 class E_waste:
     def __init__(self, collection_point, type, location, postal_code,
                  information):
@@ -62,16 +63,26 @@ class E_waste:
 
 def search(postal_code, db):
     message = 'Here are the nearest e-waste bins to you!\n'
+    no_bins_message = 'We could not find any e-waste bins near you :('
     sector = postal_code[:2]
     e_waste_collection = db.collection(u'e-wasteLocations').document(sector).collection(sector)
     docs = e_waste_collection.stream()
+    messages = []
+
     count = 1
     messages = []
     messages.append(message)
+    new_postalcode = ''
+
     for doc in docs:
         bin = E_waste.from_dict(doc.to_dict())
-        messages.insert(count, str(count) +". " + bin.collection_point + "\n\n Location: "  + bin.location + str(bin.postal_code) +"\n\n " + bin.information + "\n")
+        if len(str(bin.postal_code)) == 5:
+            new_postalcode = "0" + str(bin.postal_code)
+        messages.insert(count, str(count) +". " + bin.collection_point + "\n\n Location: "  + bin.location + " " + new_postalcode +"\n\n " + bin.information + "\n")
         count += 1
+    if count == 1:
+        messages = []
+        messages.insert(0, no_bins_message)
     return messages
 
 
