@@ -88,14 +88,15 @@ async def ewaste(update, context):
 message_handler = MessageHandler(filters.TEXT, getInfo)
 
 def main():
-    bot = Updater(BOT_TOKEN, use_context=True)
+    updater = Updater(BOT_TOKEN, use_context=True)
+    bot = updater.dispatcher
     bot.add_handler(CommandHandler('start', start))
     bot.add_handler(CommandHandler('help', help))
     bot.add_handler(CommandHandler('info', startGetInfo))
     bot.add_handler(message_handler) 
     bot.add_handler(CommandHandler("ewaste", ewaste))
-    bot.start_webhook(listen="0.0.0.0",
+    updater.start_webhook(listen="0.0.0.0",
                             port=int(PORT),
                             url_path=BOT_TOKEN)
-    bot.bot.setWebhook('https://arcane-beyond-43802.herokuapp.com/' + BOT_TOKEN)
-    bot.idle()
+    updater.bot.setWebhook('https://arcane-beyond-43802.herokuapp.com/' + BOT_TOKEN)
+    updater.idle()
