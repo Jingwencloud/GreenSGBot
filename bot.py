@@ -1,13 +1,19 @@
-from telegram import Bot, InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.ext import CallbackQueryHandler, CommandHandler, MessageHandler, filters, ApplicationBuilder
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
+from telegram.ext import CallbackQueryHandler, CommandHandler, MessageHandler, filters, ApplicationBuilder, ContextTypes
 import os
+import telegram
 import logging
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import firestore
+from query import search
+import geopy
 
-logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-                    level=logging.INFO)
+geolocator = geopy.Nominatim(user_agent='recycleTeleBot972022')
+logging.basicConfig(
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    level=logging.INFO
+)
 
 logger = logging.getLogger(__name__)
 
@@ -90,26 +96,39 @@ def getMessage(query):
 
 async def startGetInfo(update, context):
     await update.message.reply_text("What would you like to recycle today?")  
-    
-async def ewaste(update, context):
-    await update.message.reply_text("Get e-waste bin location")
 
 message_handler = MessageHandler(filters.TEXT, getInfo)
 
-def main():
-    # bot = Bot(BOT_TOKEN)
-    # updater = Updater(bot, update_queue=Queue())
-    # updater.initialize()
-    bot = ApplicationBuilder().token(BOT_TOKEN).build()
+async def search_bin(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    buttonList =  [[telegram.KeyboardButton(text='Share your location!', request_location = True)]]
+    markup = telegram.ReplyKeyboardMarkup(buttonList, one_time_keyboard = True)
+    await context.bot.send_message(chat_id=update.effective_chat.id,
+                                   text="Share your location with us to find out the nearest e-waste bin! "
+                                        + "Remember to turn on location services :)",
+                                   reply_markup=markup)
 
-    logger.info("main called")
+
+async def manage_location(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    lat = update.message.location.latitude
+    long= update.message.location.longitude
+    location = geolocator.reverse([lat, long])
+    postal_code = location.raw['address']['postcode']
+    messages = search(postal_code, db)
+    for msg in messages:
+        await context.bot.send_message(chat_id=update.effective_chat.id,
+                                       text = msg)
+
+def main():
+    bot = ApplicationBuilder().token(BOT_TOKEN).build()
+    search_bin_handler = CommandHandler('search_bin', search_bin)
     bot.add_handler(CommandHandler('start', start))
     bot.add_handler(CommandHandler('help', help))
     bot.add_error_handler(error)
     bot.add_handler(CommandHandler('info', startGetInfo))
+    bot.add_handler(search_bin_handler)
     bot.add_handler(message_handler) 
+    bot.add_handler(MessageHandler(filters.LOCATION & ~filters.COMMAND, manage_location))
     bot.add_handler(CallbackQueryHandler(getSpcifiedInfo))
-    bot.add_handler(CommandHandler("ewaste", ewaste))
     bot.run_webhook(listen="0.0.0.0",
                             port=int(PORT),
                             url_path=BOT_TOKEN,
@@ -119,3 +138,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+
