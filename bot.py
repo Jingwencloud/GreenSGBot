@@ -6,11 +6,19 @@ import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import firestore
 
+db = None
+logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+                    level=logging.INFO)
+
+logger = logging.getLogger(__name__)
+
 PROJECT_ID = os.environ.get('PROJECT_ID')
+logger.info(PROJECT_ID)
 PRIVATE_KEY_ID = os.environ.get('PRIVATE_KEY_ID')
 PRIVATE_KEY = os.environ.get('PRIVATE_KEY')
 CLIENT_EMAIL = os.environ.get('CLIENT_EMAIL')
 CLIENT_ID = os.environ.get('CLIENT_ID')
+logger.info(CLIENT_ID)
 CLIENT_CERT_URL = os.environ.get('CLIENT_CERT_URL')
 json = {
   "type": "service_account",
@@ -24,12 +32,6 @@ json = {
   "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
   "client_x509_cert_url": CLIENT_CERT_URL
 }
-
-db = None
-logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-                    level=logging.INFO)
-
-logger = logging.getLogger(__name__)
 
 PORT = int(os.environ.get('PORT', 5000))
 BOT_TOKEN = os.environ.get('BOT_TOKEN')
