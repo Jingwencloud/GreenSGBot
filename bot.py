@@ -53,11 +53,11 @@ async def error(update, context):
 async def start(update, context):
     logger.info("start command")
     await update.message.reply_text(f"Hello {update.effective_user.first_name}! I am GreenSGBot, the recycling expert! Use the following commands to find out more information about recycling! \n \n" + 
-        "Use /info to find out whether an item is suitable to recycling.\nUse /searchbin to find out the e-waste bins located near you by sharing your location.\nUse /postalcodesearchbin to find out the e-waste bins near you by sending your postal code. ")
+        "Use /info to find out whether an item is suitable for recycling.\nUse /search_bin to find out the e-waste bins located near you by sharing your location.\nUse /postalcodesearchbin to find out the e-waste bins near you by sending your postal code. ")
 
 async def help(update, context):
     await update.message.reply_text("Use the following commands to find out more information about recycling! \n \n" + 
-        "Use /info to find out whether an item is suitable to recycling.\nUse /searchbin to find out the e-waste bins located near you by sharing your location.\nUse /postalcodesearchbin to find out the e-waste bins near you by sending your postal code.")
+        "Use /info to find out whether an item is suitable for recycling.\nUse /search_bin to find out the e-waste bins located near you by sharing your location.\nUse /postalcodesearchbin to find out the e-waste bins near you by sending your postal code.")
 
 async def getInfo(update, context):
     item = update.message.text.casefold()
@@ -65,7 +65,7 @@ async def getInfo(update, context):
     query_ref = items_ref.where(u'item', u'==', item).stream()
     for query in query_ref:
         if query:
-            await update.effective_message.reply_text(getMessage(query))
+            await update.effective_message.reply_text(getMessage(query), reply_markup = ReplyKeyboardRemove())
             return
     query_keywords = item.rsplit(" ")
     query_ref = items_ref.where(u'keywords', u'array_contains_any', query_keywords).stream()
@@ -78,7 +78,7 @@ async def getInfo(update, context):
         reply_markup = InlineKeyboardMarkup(keyboard)
         await update.message.reply_text("Did you mean:", reply_markup=reply_markup)
     else:
-        await update.effective_message.reply_text(f"No information can be found for {item}. Please try another keyword. ")
+        await update.effective_message.reply_text(f"No information can be found for {item}. Please try another keyword.", reply_markup = ReplyKeyboardRemove())
 
 async def getSpcifiedInfo(update, context):
     query = update.callback_query
@@ -88,7 +88,7 @@ async def getSpcifiedInfo(update, context):
     items_ref = db.collection(u'recycling-information')
     query_ref = items_ref.where(u'item', u'==', item).stream()
     for query in query_ref:
-        await update.effective_message.reply_text(getMessage(query))
+        await update.effective_message.reply_text(getMessage(query), reply_markup = ReplyKeyboardRemove())
 
 def getMessage(query):
     message = query.get("info")

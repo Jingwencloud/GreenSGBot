@@ -70,7 +70,7 @@ def search(postal_code, db):
     messages.append(message)
     for doc in docs:
         bin = E_waste.from_dict(doc.to_dict())
-        messages.insert(count, str(count) +". " + bin.collection_point + "\n\n Location: "  + bin.location + str(bin.postal_code) +"\n\n " + bin.information + "\n")
+        messages.insert(count, str(count) +". " + bin.collection_point + "\n\n Location: "  + bin.location + " " + str(bin.postal_code) +"\n\n " + bin.information + "\n")
         count += 1
     return messages
 
