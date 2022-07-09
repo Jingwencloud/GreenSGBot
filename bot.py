@@ -1,5 +1,6 @@
+
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardRemove, Update
-from telegram.ext import CallbackQueryHandler, CommandHandler, MessageHandler, filters, ApplicationBuilder, ContextTypes
+from telegram.ext import CallbackQueryHandler, CommandHandler, ConversationHandler, MessageHandler, filters, ApplicationBuilder, ContextTypes
 import os
 import telegram
 import logging
@@ -45,10 +46,13 @@ BOT_TOKEN = os.environ.get('BOT_TOKEN')
 cred = credentials.Certificate(json)
 firebase_admin.initialize_app(cred)
 db = firestore.client()
+POSTAL_CODE = range(1)
+
 
 async def error(update, context):
     """Log Errors caused by Updates."""
     logger.warning('Update "%s" caused error "%s"', update, context.error)
+
 
 async def start(update, context):
     logger.info("start command")
@@ -120,10 +124,34 @@ async def manage_location(update: Update, context: ContextTypes.DEFAULT_TYPE):
     for msg in messages:
         await context.bot.send_message(chat_id=update.effective_chat.id,
                                        text = msg, reply_markup=ReplyKeyboardRemove())
+                                       
+
+async def postal_code_search_bin(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text("Send me a valid postal code to find e-waste bins nearby :)")
+    return POSTAL_CODE
+
+async def postal_code_search(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    message = str(update.effective_message.text)
+    if (len(message) != 6) or (not message.isnumeric()) or (int(message) >= 900000):
+        await update.message.reply_text("Invalid postal code. Try again :)")
+    else:
+        messages = search(message, db)
+        for msg in messages:
+            await context.bot.send_message(chat_id=update.effective_chat.id,
+                    text = msg)
+        return ConversationHandler.END
+
 
 def main():
     bot = ApplicationBuilder().token(BOT_TOKEN).build()
     search_bin_handler = CommandHandler('search_bin', search_bin)
+    conv_handler = ConversationHandler(
+        entry_points=[CommandHandler('postalcodesearchbin', postal_code_search_bin)],
+        fallbacks=[],
+        states={
+            POSTAL_CODE: [MessageHandler(filters.TEXT & ~filters.COMMAND, postal_code_search)],
+        },
+    )
     bot.add_handler(CommandHandler('start', start))
     bot.add_handler(CommandHandler('help', help))
     bot.add_error_handler(error)
@@ -132,6 +160,7 @@ def main():
     bot.add_handler(message_handler) 
     bot.add_handler(MessageHandler(filters.LOCATION & ~filters.COMMAND, manage_location))
     bot.add_handler(CallbackQueryHandler(getSpcifiedInfo))
+    bot.add_handler(conv_handler)
     bot.run_webhook(listen="0.0.0.0",
                             port=int(PORT),
                             url_path=BOT_TOKEN,
