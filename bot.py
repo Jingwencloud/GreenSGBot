@@ -32,7 +32,7 @@ json = {
   "client_x509_cert_url": CLIENT_CERT_URL
 }
 
-PORT = int(os.environ.get('PORT', 8443))
+PORT = int(os.environ.get('PORT', '8443'))
 BOT_TOKEN = os.environ.get('BOT_TOKEN')
 db = None
 
@@ -116,7 +116,7 @@ def main():
     bot.run_webhook(listen="0.0.0.0",
                             port=int(PORT),
                             url_path=BOT_TOKEN,
-                            webhook_url='https://arcane-beyond-43802.herokuapp.com/')
+                            webhook_url='https://arcane-beyond-43802.herokuapp.com/' + BOT_TOKEN)
     bot.start()
 
 
