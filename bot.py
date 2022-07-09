@@ -8,12 +8,19 @@ from firebase_admin import credentials
 from firebase_admin import firestore
 from query import search
 import geopy
+import firebase_admin
+from firebase_admin import credentials
+from firebase_admin import firestore
 
 geolocator = geopy.Nominatim(user_agent='recycleTeleBot972022')
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     level=logging.INFO
 )
+cred = credentials.Certificate("test-6d84c-firebase-adminsdk-qknug-c1c6c4f968.json")
+firebase_admin.initialize_app(cred)
+db = firestore.client()
+geolocator = geopy.Nominatim(user_agent='recycleTeleBot972022')
 
 logger = logging.getLogger(__name__)
 
@@ -138,4 +145,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
