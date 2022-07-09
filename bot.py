@@ -6,6 +6,9 @@ from telegram.ext import Updater, Application, CommandHandler, ContextTypes, Mes
 import os
 from query import search
 import geopy
+import firebase_admin
+from firebase_admin import credentials
+from firebase_admin import firestore
 
 
 geolocator = geopy.Nominatim(user_agent='recycleTeleBot972022')
@@ -15,6 +18,10 @@ logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     level=logging.INFO
 )
+cred = credentials.Certificate("test-6d84c-firebase-adminsdk-qknug-c1c6c4f968.json")
+firebase_admin.initialize_app(cred)
+db = firestore.client()
+geolocator = geopy.Nominatim(user_agent='recycleTeleBot972022')
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -40,10 +47,16 @@ async def manage_location(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await context.bot.send_message(chat_id=update.effective_chat.id,
                                        text = msg)
 
+
+
+
 if __name__ == '__main__':
+    application = Application.builder().token(TOKEN).build()
     start_handler = CommandHandler('start', start)
     search_bin_handler = CommandHandler('search_bin', search_bin)
-    dp.add_handler(start_handler)
-    dp.add_handler(search_bin_handler)
+    application.add_handler(start_handler)
+    application.add_handler(search_bin_handler)
 
-    dp.add_handler(MessageHandler(filters.LOCATION & ~filters.COMMAND, manage_location))
+    application.add_handler(MessageHandler(filters.LOCATION & ~filters.COMMAND, manage_location))
+
+    application.run_polling()
