@@ -25,7 +25,7 @@ json = {
   "client_x509_cert_url": CLIENT_CERT_URL
 }
 
-db = firestore.client()
+db = None
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     level=logging.INFO)
 
@@ -85,11 +85,11 @@ def getMessage(query):
     else:
         return message + "\nPlease do not place it in the blue recycling bins"
 
-async def startGetInfo(update, context):
-    await update.message.reply_text("What would you like to recycle today?")  
+def startGetInfo(update, context):
+    update.message.reply_text("What would you like to recycle today?")  
     
-async def ewaste(update, context):
-    await update.message.reply_text("Get e-waste bin location")
+def ewaste(update, context):
+    update.message.reply_text("Get e-waste bin location")
 
 message_handler = MessageHandler(filters.TEXT, getInfo)
 
@@ -99,6 +99,7 @@ def main():
     logger.info("main called")
     cred = credentials.Certificate(json)
     firebase_admin.initialize_app(cred)
+    db = firestore.client()
     bot.add_handler(CommandHandler('start', start))
     bot.add_handler(CommandHandler('help', help))
     bot.add_error_handler(error)
