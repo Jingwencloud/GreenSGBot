@@ -1,5 +1,5 @@
 from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove, InlineKeyboardButton, InlineKeyboardMarkup, Update
-from telegram.ext import ApplicationBuilder, ConversationHandler, CallbackQueryHandler, CommandHandler, MessageHandler, filters, Updater
+from telegram.ext import ApplicationBuilder, ConversationHandler, CallbackQueryHandler, CommandHandler, MessageHandler, filters
 import requests
 import os
 from dotenv import load_dotenv
@@ -14,9 +14,8 @@ firebase_admin.initialize_app(cred)
 db = firestore.client()
 load_dotenv()
 
-PORT = int(os.environ.get('PORT', 5000))
 BOT_TOKEN = os.getenv('BOT_TOKEN')
-bot = Updater(BOT_TOKEN, use_context=True)
+bot = ApplicationBuilder().token(BOT_TOKEN).build()
 
 async def start(update, context):
     await update.message.reply_text(f"Hello {update.effective_user.first_name}! I am SYJ, the recycling expert! Use the following commands to find out more information about recycling! \n \n" + 
@@ -78,7 +77,4 @@ bot.add_handler(CommandHandler('start', start))
 bot.add_handler(CommandHandler('help', help))
 bot.add_handler(CommandHandler('info', startGetInfo))
 bot.add_handler(CommandHandler("ewaste", ewaste))
-bot.start_webhook(listen="0.0.0.0",
-                          port=int(PORT),
-                          url_path=BOT_TOKEN)
-bot.bot.setWebhook('https://arcane-beyond-43802.herokuapp.com/' + BOT_TOKEN)
+bot.run_polling()
