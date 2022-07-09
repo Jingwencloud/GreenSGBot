@@ -1,6 +1,6 @@
 from queue import Queue
 from telegram import Bot, InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.ext import CallbackQueryHandler, CommandHandler, MessageHandler, filters, Updater
+from telegram.ext import CallbackQueryHandler, CommandHandler, MessageHandler, filters, ApplicationBuilder
 import os
 import logging
 import firebase_admin
@@ -96,8 +96,11 @@ async def ewaste(update, context):
 message_handler = MessageHandler(filters.TEXT, getInfo)
 
 def main():
-    updater = Updater(Bot(BOT_TOKEN), update_queue=Queue())
-    bot = updater.dispatcher
+    # bot = Bot(BOT_TOKEN)
+    # updater = Updater(bot, update_queue=Queue())
+    # updater.initialize()
+    bot = ApplicationBuilder().token(BOT_TOKEN).build()
+
     logger.info("main called")
     cred = credentials.Certificate(json)
     firebase_admin.initialize_app(cred)
@@ -109,11 +112,13 @@ def main():
     bot.add_handler(message_handler) 
     bot.add_handler(CallbackQueryHandler(getSpcifiedInfo))
     bot.add_handler(CommandHandler("ewaste", ewaste))
-    updater.start_webhook(listen="0.0.0.0",
+    update_queue = bot.update_queue
+    bot.run_webhook(listen="0.0.0.0",
                             port=int(PORT),
-                            url_path=BOT_TOKEN)
-    updater.bot.setWebhook('https://arcane-beyond-43802.herokuapp.com/' + BOT_TOKEN)
-    updater.idle()
+                            url_path=BOT_TOKEN,
+                            webhook_url='https://arcane-beyond-43802.herokuapp.com/')
+    bot.start()
+
 
 if __name__ == '__main__':
     main()
