@@ -40,22 +40,22 @@ async def error(update, context):
     """Log Errors caused by Updates."""
     logger.warning('Update "%s" caused error "%s"', update, context.error)
 
-async def start(update, context):
+def start(update, context):
     logger.info("start command")
-    await update.message.reply_text(f"Hello {update.effective_user.first_name}! I am SYJ, the recycling expert! Use the following commands to find out more information about recycling! \n \n" + 
+    update.message.reply_text(f"Hello {update.effective_user.first_name}! I am SYJ, the recycling expert! Use the following commands to find out more information about recycling! \n \n" + 
         "Use /info to find out whether an item is suitable to recycling.\nUse /ewaste to find out the e-waste bins located near you.")
 
-async def help(update, context):
-    await update.message.reply_text("Use the following commands to find out more information about recycling! \n \n" + 
+def help(update, context):
+    update.message.reply_text("Use the following commands to find out more information about recycling! \n \n" + 
         "Use /info to find out whether an item is suitable to recycling.\nUse /ewaste to find out the e-waste bins located near you.")
 
-async def getInfo(update, context):
+def getInfo(update, context):
     item = update.message.text.casefold()
     items_ref = db.collection(u'recycling-information')
     query_ref = items_ref.where(u'item', u'==', item).stream()
     for query in query_ref:
         if query:
-            await update.effective_message.reply_text(getMessage(query))
+            update.effective_message.reply_text(getMessage(query))
             return
     query_keywords = item.rsplit(" ")
     query_ref = items_ref.where(u'keywords', u'array_contains_any', query_keywords).stream()
@@ -66,19 +66,19 @@ async def getInfo(update, context):
 
     if len(keyboard):
         reply_markup = InlineKeyboardMarkup(keyboard)
-        await update.message.reply_text("Did you mean:", reply_markup=reply_markup)
+        update.message.reply_text("Did you mean:", reply_markup=reply_markup)
     else:
-        await update.effective_message.reply_text(f"No information can be found for {item}. Please try another keyword. ")
+        update.effective_message.reply_text(f"No information can be found for {item}. Please try another keyword. ")
 
-async def getSpcifiedInfo(update, context):
+def getSpcifiedInfo(update, context):
     query = update.callback_query
 
-    await query.answer()
+    query.answer()
     item = query.data
     items_ref = db.collection(u'recycling-information')
     query_ref = items_ref.where(u'item', u'==', item).stream()
     for query in query_ref:
-        await update.effective_message.reply_text(getMessage(query))
+        update.effective_message.reply_text(getMessage(query))
 
 def getMessage(query):
     message = query.get("info")
@@ -87,11 +87,11 @@ def getMessage(query):
     else:
         return message + "\nPlease do not place it in the blue recycling bins"
 
-async def startGetInfo(update, context):
-    await update.message.reply_text("What would you like to recycle today?")  
+def startGetInfo(update, context):
+    update.message.reply_text("What would you like to recycle today?")  
     
-async def ewaste(update, context):
-    await update.message.reply_text("Get e-waste bin location")
+def ewaste(update, context):
+    update.message.reply_text("Get e-waste bin location")
 
 message_handler = MessageHandler(filters.TEXT, getInfo)
 
