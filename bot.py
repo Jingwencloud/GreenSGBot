@@ -95,7 +95,7 @@ def ewaste(update, context):
 message_handler = MessageHandler(filters.TEXT, getInfo)
 
 def main():
-    updater = Updater(BOT_TOKEN, use_context=True)
+    updater = Updater(BOT_TOKEN)
     bot = updater.dispatcher
     logger.info("main called")
     cred = credentials.Certificate(json)
