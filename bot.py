@@ -43,6 +43,7 @@ def error(update, context):
     logger.warning('Update "%s" caused error "%s"', update, context.error)
 
 async def start(update, context):
+    logger.log("start command")
     await update.message.reply_text(f"Hello {update.effective_user.first_name}! I am SYJ, the recycling expert! Use the following commands to find out more information about recycling! \n \n" + 
         "Use /info to find out whether an item is suitable to recycling.\nUse /ewaste to find out the e-waste bins located near you.")
 
@@ -100,6 +101,7 @@ async def help(update, context):
 def main():
     updater = Updater(BOT_TOKEN, use_context=True)
     bot = updater.dispatcher
+    logger.log("main called")
     bot.add_handler(CommandHandler('start', start))
     bot.add_handler(CommandHandler('help', help))
     bot.add_error_handler(error)
