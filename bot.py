@@ -34,7 +34,9 @@ json = {
 
 PORT = int(os.environ.get('PORT', '8443'))
 BOT_TOKEN = os.environ.get('BOT_TOKEN')
-db = None
+cred = credentials.Certificate(json)
+firebase_admin.initialize_app(cred)
+db = firestore.client()
 
 async def error(update, context):
     """Log Errors caused by Updates."""
@@ -102,9 +104,6 @@ def main():
     bot = ApplicationBuilder().token(BOT_TOKEN).build()
 
     logger.info("main called")
-    cred = credentials.Certificate(json)
-    firebase_admin.initialize_app(cred)
-    db = firestore.client()
     bot.add_handler(CommandHandler('start', start))
     bot.add_handler(CommandHandler('help', help))
     bot.add_error_handler(error)
