@@ -14,7 +14,7 @@ CLIENT_ID = os.environ.get('CLIENT_ID')
 CLIENT_CERT_URL = os.environ.get('CLIENT_CERT_URL')
 json = {
   "type": "service_account",
-  "project_id": PROJECT_ID,
+  "project_id": "test-6d84c",
   "private_key_id": PRIVATE_KEY_ID,
   "private_key": PRIVATE_KEY,
   "client_email": CLIENT_EMAIL,
