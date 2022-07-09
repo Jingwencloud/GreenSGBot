@@ -1,4 +1,5 @@
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup
+from queue import Queue
+from telegram import Bot, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import CallbackQueryHandler, CommandHandler, MessageHandler, filters, Updater
 import os
 import logging
@@ -35,26 +36,26 @@ PORT = int(os.environ.get('PORT', 5000))
 BOT_TOKEN = os.environ.get('BOT_TOKEN')
 db = None
 
-def error(update, context):
+async def error(update, context):
     """Log Errors caused by Updates."""
     logger.warning('Update "%s" caused error "%s"', update, context.error)
 
-def start(update, context):
+async def start(update, context):
     logger.info("start command")
-    update.message.reply_text(f"Hello {update.effective_user.first_name}! I am SYJ, the recycling expert! Use the following commands to find out more information about recycling! \n \n" + 
+    await update.message.reply_text(f"Hello {update.effective_user.first_name}! I am SYJ, the recycling expert! Use the following commands to find out more information about recycling! \n \n" + 
         "Use /info to find out whether an item is suitable to recycling.\nUse /ewaste to find out the e-waste bins located near you.")
 
-def help(update, context):
-    update.message.reply_text("Use the following commands to find out more information about recycling! \n \n" + 
+async def help(update, context):
+    await update.message.reply_text("Use the following commands to find out more information about recycling! \n \n" + 
         "Use /info to find out whether an item is suitable to recycling.\nUse /ewaste to find out the e-waste bins located near you.")
 
-def getInfo(update, context):
+async def getInfo(update, context):
     item = update.message.text.casefold()
     items_ref = db.collection(u'recycling-information')
     query_ref = items_ref.where(u'item', u'==', item).stream()
     for query in query_ref:
         if query:
-            update.effective_message.reply_text(getMessage(query))
+            await update.effective_message.reply_text(getMessage(query))
             return
     query_keywords = item.rsplit(" ")
     query_ref = items_ref.where(u'keywords', u'array_contains_any', query_keywords).stream()
@@ -65,9 +66,9 @@ def getInfo(update, context):
 
     if len(keyboard):
         reply_markup = InlineKeyboardMarkup(keyboard)
-        update.message.reply_text("Did you mean:", reply_markup=reply_markup)
+        await update.message.reply_text("Did you mean:", reply_markup=reply_markup)
     else:
-        update.effective_message.reply_text(f"No information can be found for {item}. Please try another keyword. ")
+        await update.effective_message.reply_text(f"No information can be found for {item}. Please try another keyword. ")
 
 async def getSpcifiedInfo(update, context):
     query = update.callback_query
@@ -86,16 +87,16 @@ def getMessage(query):
     else:
         return message + "\nPlease do not place it in the blue recycling bins"
 
-def startGetInfo(update, context):
-    update.message.reply_text("What would you like to recycle today?")  
+async def startGetInfo(update, context):
+    await update.message.reply_text("What would you like to recycle today?")  
     
-def ewaste(update, context):
-    update.message.reply_text("Get e-waste bin location")
+async def ewaste(update, context):
+    await update.message.reply_text("Get e-waste bin location")
 
 message_handler = MessageHandler(filters.TEXT, getInfo)
 
 def main():
-    updater = Updater(BOT_TOKEN)
+    updater = Updater(Bot(BOT_TOKEN), update_queue=Queue())
     bot = updater.dispatcher
     logger.info("main called")
     cred = credentials.Certificate(json)
