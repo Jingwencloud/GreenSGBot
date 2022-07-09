@@ -17,9 +17,7 @@ logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     level=logging.INFO
 )
-cred = credentials.Certificate("test-6d84c-firebase-adminsdk-qknug-c1c6c4f968.json")
-firebase_admin.initialize_app(cred)
-db = firestore.client()
+
 geolocator = geopy.Nominatim(user_agent='recycleTeleBot972022')
 
 logger = logging.getLogger(__name__)
