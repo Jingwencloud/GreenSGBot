@@ -12,12 +12,9 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
 logger = logging.getLogger(__name__)
 
 PROJECT_ID = os.environ.get('PROJECT_ID')
-logger.info(PROJECT_ID)
 PRIVATE_KEY_ID = os.environ.get('PRIVATE_KEY_ID')
-PRIVATE_KEY = os.environ.get('PRIVATE_KEY')
-logger.info(PRIVATE_KEY)
+PRIVATE_KEY = os.environ.get('PRIVATE_KEY').replace('\\n', '\n')
 CLIENT_EMAIL = os.environ.get('CLIENT_EMAIL')
-logger.info(CLIENT_EMAIL)
 CLIENT_ID = os.environ.get('CLIENT_ID')
 logger.info(CLIENT_ID)
 CLIENT_CERT_URL = os.environ.get('CLIENT_CERT_URL')
