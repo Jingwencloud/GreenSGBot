@@ -1,6 +1,7 @@
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import CallbackQueryHandler, CommandHandler, MessageHandler, filters, Updater
 import os
+import logging
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import firestore
@@ -29,8 +30,17 @@ from firebase_admin import firestore
 # firebase_admin.initialize_app(cred)
 
 # db = firestore.client()
+logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+                    level=logging.INFO)
+
+logger = logging.getLogger(__name__)
+
 PORT = int(os.environ.get('PORT', 5000))
 BOT_TOKEN = os.environ.get('BOT_TOKEN')
+
+def error(update, context):
+    """Log Errors caused by Updates."""
+    logger.warning('Update "%s" caused error "%s"', update, context.error)
 
 async def start(update, context):
     await update.message.reply_text(f"Hello {update.effective_user.first_name}! I am SYJ, the recycling expert! Use the following commands to find out more information about recycling! \n \n" + 
@@ -92,6 +102,7 @@ def main():
     bot = updater.dispatcher
     bot.add_handler(CommandHandler('start', start))
     bot.add_handler(CommandHandler('help', help))
+    bot.add_error_handler(error)
     # bot.add_handler(CommandHandler('info', startGetInfo))
     # bot.add_handler(message_handler) 
     # bot.add_handler(CommandHandler("ewaste", ewaste))
