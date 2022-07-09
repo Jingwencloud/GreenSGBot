@@ -13,7 +13,6 @@ db = firestore.client()
 load_dotenv()
 PORT = int(os.environ.get('PORT', 5000))
 BOT_TOKEN = os.getenv('BOT_TOKEN')
-bot = Updater(BOT_TOKEN, use_context=True)
 
 async def start(update, context):
     await update.message.reply_text(f"Hello {update.effective_user.first_name}! I am SYJ, the recycling expert! Use the following commands to find out more information about recycling! \n \n" + 
@@ -63,7 +62,6 @@ def getMessage(query):
         return message + "\nPlease do not place it in the blue recycling bins"
 
 async def startGetInfo(update, context):
-    bot.add_handler(message_handler) 
     await update.message.reply_text("What would you like to recycle today?")  
     
 async def ewaste(update, context):
@@ -71,11 +69,15 @@ async def ewaste(update, context):
 
 message_handler = MessageHandler(filters.TEXT, getInfo)
 
-bot.add_handler(CommandHandler('start', start))
-bot.add_handler(CommandHandler('help', help))
-bot.add_handler(CommandHandler('info', startGetInfo))
-bot.add_handler(CommandHandler("ewaste", ewaste))
-bot.start_webhook(listen="0.0.0.0",
-                          port=int(PORT),
-                          url_path=BOT_TOKEN)
-bot.bot.setWebhook('https://arcane-beyond-43802.herokuapp.com/' + BOT_TOKEN)
+def main():
+    bot = Updater(BOT_TOKEN, use_context=True)
+    bot.add_handler(CommandHandler('start', start))
+    bot.add_handler(CommandHandler('help', help))
+    bot.add_handler(CommandHandler('info', startGetInfo))
+    bot.add_handler(message_handler) 
+    bot.add_handler(CommandHandler("ewaste", ewaste))
+    bot.start_webhook(listen="0.0.0.0",
+                            port=int(PORT),
+                            url_path=BOT_TOKEN)
+    bot.bot.setWebhook('https://arcane-beyond-43802.herokuapp.com/' + BOT_TOKEN)
+    bot.idle()
