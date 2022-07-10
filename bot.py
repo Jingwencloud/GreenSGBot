@@ -154,10 +154,10 @@ def main():
     bot.add_error_handler(error)
     bot.add_handler(CommandHandler('info', startGetInfo))
     bot.add_handler(search_bin_handler)
+    bot.add_handler(conv_handler)
     bot.add_handler(message_handler) 
     bot.add_handler(MessageHandler(filters.LOCATION & ~filters.COMMAND, manage_location))
     bot.add_handler(CallbackQueryHandler(getSpcifiedInfo))
-    bot.add_handler(conv_handler)
     bot.run_webhook(listen="0.0.0.0",
                             port=int(PORT),
                             url_path=BOT_TOKEN,
