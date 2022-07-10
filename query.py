@@ -67,8 +67,7 @@ def search(postal_code, db):
     sector = postal_code[:2]
     e_waste_collection = db.collection(u'e-wasteLocations').document(sector).collection(sector)
     docs = e_waste_collection.stream()
-    messages = []
-
+    url = "https://www.google.com/maps/place/"
     count = 1
     messages = []
     messages.append(message)
@@ -76,9 +75,15 @@ def search(postal_code, db):
 
     for doc in docs:
         bin = E_waste.from_dict(doc.to_dict())
+        full_url = url
         if len(str(bin.postal_code)) == 5:
             new_postalcode = "0" + str(bin.postal_code)
-        messages.insert(count, str(count) +". " + bin.collection_point + "\n\n Location: "  + bin.location + " " + new_postalcode +"\n\n " + bin.information + "\n")
+        location_placeholder = bin.location + " " + new_postalcode
+        location_url = location_placeholder.split()
+        num = len(location_url)
+        for x in range(num):
+            full_url += "+" + location_url[x]
+        messages.insert(count, str(count) +". " + bin.collection_point + "\n\n Location: "  + f"<a href='{full_url}'>{location_placeholder}</a>" + "\n\n " + bin.information + "\n")
         count += 1
     if count == 1:
         messages = []
