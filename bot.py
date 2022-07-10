@@ -123,7 +123,8 @@ async def manage_location(update: Update, context: ContextTypes.DEFAULT_TYPE):
     messages = search(postal_code, db)
     for msg in messages:
         await context.bot.send_message(chat_id=update.effective_chat.id,
-                                       text = msg, reply_markup=ReplyKeyboardRemove())
+                                       text = msg, reply_markup=ReplyKeyboardRemove(),
+                                       parse_mode=telegram.constants.ParseMode.HTML)
                                        
 
 async def postal_code_search_bin(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -143,7 +144,7 @@ async def postal_code_search(update: Update, context: ContextTypes.DEFAULT_TYPE)
         messages = search(message, db)
         for msg in messages:
             await context.bot.send_message(chat_id=update.effective_chat.id,
-                    text = msg)
+                    text = msg, parse_mode=telegram.constants.ParseMode.HTML)
         return ConversationHandler.END
 
 conv_handler = ConversationHandler(
