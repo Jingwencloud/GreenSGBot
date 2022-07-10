@@ -78,11 +78,11 @@ def search(postal_code, db):
         full_url = url
         if len(str(bin.postal_code)) == 5:
             new_postalcode = "0" + str(bin.postal_code)
-        location_placeholder = bin.location + " " + new_postalcode
-        location_url = location_placeholder.split()
-        num = len(location_url)
-        for x in range(num):
-            full_url += "+" + location_url[x]
+        location_placeholder = bin.location
+        location_url = location_placeholder.split(",")
+        full_url += "+" + location_url[0] + "+" + new_postalcode
+        location_placeholder = location_placeholder + " " + new_postalcode
+        full_url = full_url.replace(",", "")
         messages.insert(count, str(count) +". " + bin.collection_point + "\n\n Location: "  + f"<a href='{full_url}'>{location_placeholder}</a>" + "\n\n " + bin.information + "\n")
         count += 1
     if count == 1:
