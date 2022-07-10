@@ -58,7 +58,7 @@ async def start(update, context):
 
 async def help(update, context):
     await update.message.reply_text("Use the following commands to find out more information about recycling! \n \n" + 
-        "Use /info to find out whether an item is suitable for recycling.\nUse /search_bin to find out the e-waste bins located near you by sharing your location.\nUse /postalcodesearchbin to find out the e-waste bins near you by sending your postal code.")
+        "Use /info to find out whether an item is suitable for recycling by telling me what is the item.\nUse /search_bin to find out the e-waste bins located near you by sharing your location.\nUse /postalcodesearchbin to find out the e-waste bins near you by sending me your postal code. If you no longer want to search for bins with your postal code, use /cancel to stop the command. ")
 
 async def getInfo(update, context):
     item = update.message.text.casefold()
