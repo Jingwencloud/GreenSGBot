@@ -102,7 +102,7 @@ async def startGetInfo(update, context):
     await update.message.reply_text("What would you like to recycle today?")  
     return ConversationHandler.END
 
-message_handler = MessageHandler(filters.TEXT, getInfo)
+message_handler = MessageHandler(filters.TEXT & ~filters.COMMAND, getInfo)
 
 async def search_bin(update: Update, context: ContextTypes.DEFAULT_TYPE):
     bot.add_handler(MessageHandler(filters.LOCATION & ~filters.COMMAND, manage_location))
