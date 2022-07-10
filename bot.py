@@ -106,7 +106,6 @@ message_handler = MessageHandler(filters.TEXT & ~filters.COMMAND, getInfo)
 
 async def search_bin(update: Update, context: ContextTypes.DEFAULT_TYPE):
     bot.remove_handler(message_handler)
-    bot.add_handler(MessageHandler(filters.LOCATION & ~filters.COMMAND, manage_location))
     buttonList =  [[telegram.KeyboardButton(text='Share your location!', request_location = True)]]
     markup = telegram.ReplyKeyboardMarkup(buttonList, one_time_keyboard = True)
     await context.bot.send_message(chat_id=update.effective_chat.id,
@@ -163,6 +162,7 @@ def main():
     bot.add_handler(CommandHandler('info', startGetInfo))
     bot.add_handler(search_bin_handler)
     bot.add_handler(conv_handler)
+    bot.add_handler(MessageHandler(filters.LOCATION & ~filters.COMMAND, manage_location))
     bot.add_handler(CallbackQueryHandler(getSpcifiedInfo))
     bot.run_webhook(listen="0.0.0.0",
                             port=int(PORT),
