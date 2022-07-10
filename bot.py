@@ -132,6 +132,7 @@ async def postal_code_search_bin(update: Update, context: ContextTypes.DEFAULT_T
     return POSTAL_CODE
 
 async def cancel(update, context):
+    bot.remove_handler(message_handler) 
     return ConversationHandler.END
 
 async def postal_code_search(update: Update, context: ContextTypes.DEFAULT_TYPE):
