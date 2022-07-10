@@ -101,6 +101,7 @@ def getMessage(query):
 async def startGetInfo(update, context):
     bot.add_handler(message_handler) 
     await update.message.reply_text("What would you like to recycle today?")  
+    return ConversationHandler.END
 
 message_handler = MessageHandler(filters.TEXT & ~filters.COMMAND, getInfo)
 
@@ -112,6 +113,7 @@ async def search_bin(update: Update, context: ContextTypes.DEFAULT_TYPE):
                                    text="Share your location with us to find out the nearest e-waste bin! "
                                         + "Remember to turn on location services :)",
                                    reply_markup=markup)
+    return ConversationHandler.END
 
 
 async def manage_location(update: Update, context: ContextTypes.DEFAULT_TYPE):
